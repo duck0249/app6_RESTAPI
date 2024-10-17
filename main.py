@@ -1,15 +1,17 @@
 ## App6 : REST API, Create REST API powered by Flask
 from flask import Flask, render_template
-# import requests
 import pandas as pd
 from datetime import datetime
 
 app = Flask(__name__)
+df_station = pd.read_csv("./data_small/stations.txt", skiprows=17)
+df_station = df_station.iloc[:20,[0,1]]
+df_html = df_station.to_html(header=True)
 
 @app.route("/")
 def home():
     try:
-        return render_template("home.html")
+        return render_template("home.html", table=df_html)
     except Exception as e:
         return f"Error: {e}"
 
@@ -22,6 +24,8 @@ def about(station, date):
 
         date = datetime.strptime(date, "%Y%m%d")
         date = date.strftime("%Y-%m-%d")
+
+        
 
         temperature = df.loc[df["    DATE"] == date]["   TG"].squeeze() / 10
         return {"station": station,
